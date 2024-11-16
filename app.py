@@ -6,9 +6,12 @@ import cv2
 from keras.models import load_model
 from flask import Flask, request, render_template
 from werkzeug.utils import secure_filename
+from flask_cors import CORS, cross_origin
 
 app = Flask(__name__)
+cors = CORS(app)
 model = load_model('BrainTumor10EpochsCategorical.h5')
+app.config['CORS_HEADERS'] = 'Content-Type'
 
 def get_className(classNo):
     if classNo == 0:
@@ -27,10 +30,12 @@ def getResult(img):
     return result_final
 
 @app.route('/', methods=['GET'])
+@cross_origin()
 def index():
     return render_template('index.html')
 
 @app.route('/predict', methods=['GET', 'POST'])
+@cross_origin()
 def upload():
     if request.method == 'POST':
         f = request.files['file']
